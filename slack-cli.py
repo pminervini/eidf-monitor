@@ -22,6 +22,7 @@ def handle_some_command(body, ack, respond, client, logger):
     while_true_pods = filter_while_true_pods()
     for pod in while_true_pods:
         respond(f"Pod {pod['name']} using {pod['#GPUs']} GPUs was running for {pod['runtime']} with command {pod['command']}.")
+    logger.info(body)
 
 @app.event("message")
 def handle_message_events(body, logger):
