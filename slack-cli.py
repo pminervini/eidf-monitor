@@ -4,7 +4,7 @@ import config
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-from utils import get_pods_not_using_gpus
+from utils import get_pods_not_using_gpus, filter_while_true_pods
 
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
@@ -18,6 +18,10 @@ def handle_some_command(body, ack, respond, client, logger):
     for entry in entry_lst:
         respond(f'Pod {entry["pod"]} owned by {entry["owner"]} from {entry["namespace"]} was allocated [{entry["num_gpus"]}] GPUs but it is not using them.')
     logger.info(body)
+    
+    while_true_pods = filter_while_true_pods()
+    for pod in while_true_pods:
+        respond(f"Pod {pod['name']} using {pod['#GPUs']} GPUs was running for {pod['runtime']} with command {pod['command']}.")
 
 @app.event("message")
 def handle_message_events(body, logger):
